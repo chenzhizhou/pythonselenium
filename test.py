@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from defAssist import waitloadmask, assertErr, navigationBarClick, logPrint, randomClick, viewIt
+from defAssist import waitloadmask, assertErr, navigationBarClick, logPrint, randomClick, viewIt, randomClick_more
 
 chromedriverpath = '.\\libs\\chromedriver.exe'
 runlogpath = '.runlog.log'
@@ -45,14 +45,12 @@ waitloadmask(driver)
 assertErr(driver, '首页概览')
 sleep(3)
 
-navigationBarClick(driver, '增值服务-促销活动-自定义取货码')
+WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//span[@id='nav-main-right-account-name']")).click()
+assertErr(driver, '用户信息')
+WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//input[@value='登录链接']")).click()
 waitloadmask(driver)
-assertErr(driver, '自定义取货码')
-pickcodeLists = driver.find_elements_by_xpath("//a[@class='detail']")
-randomClick(pickcodeLists)
-waitloadmask(driver)
-assertErr(driver, '自定义取货码查看')
-driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+assertErr(driver, '登录链接')
+
 
 
 

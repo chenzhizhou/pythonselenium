@@ -24,7 +24,7 @@ def assertErr(driver, title):
 def waitloadmask(driver):
     loadmasklocator = (By.XPATH, "//div[@class='loadmask-msg']")
     try:
-        WebDriverWait(driver, 0.5).until(EC.presence_of_element_located(loadmasklocator))
+        WebDriverWait(driver, 1).until(EC.presence_of_element_located(loadmasklocator))
     except:
         # logPrint('加载中未出现或消失太快')
         pass
@@ -50,7 +50,21 @@ def navigationBarClick(driver, navigationString):
             break
 
 def randomClick(elements):
-    elements[random.randint(0, len(elements) - 1)].click()
+    clickCount = random.randint(0, len(elements) - 1)
+    elements[clickCount].click()
+    return clickCount
+
+def randomClick_more(elements):
+    moreClickTime = random.randint(1, len(elements))
+    i = 0
+    count = randomClick(elements)
+    while i < moreClickTime:
+        try:
+            randomClick(elements)
+        except:
+            pass
+        i += 1
+        sleep(0.5)
 
 def viewIt(driver, tag):
     try:

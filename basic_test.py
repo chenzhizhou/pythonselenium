@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from defAssist import waitloadmask, assertErr, navigationBarClick, logPrint, randomClick, viewIt
+from defAssist import waitloadmask, assertErr, navigationBarClick, logPrint, randomClick, viewIt, randomClick_more
 
 chromedriverpath = '.\\libs\\chromedriver.exe'
 runlogpath = '.runlog.log'
@@ -45,6 +45,12 @@ logPrint('登录')
 waitloadmask(driver)
 assertErr(driver, '首页概览')
 sleep(3)
+
+WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//span[@id='nav-main-right-account-name']")).click()
+assertErr(driver, '用户信息')
+WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//input[@value='登录链接']")).click()
+waitloadmask(driver)
+assertErr(driver, '登录链接')
 
 navigationBarClick(driver, '地图模式')
 waitloadmask(driver)
@@ -115,6 +121,10 @@ viewIt(driver, '机型管理')
 navigationBarClick(driver, '售货机-工控机-设备列表')
 waitloadmask(driver)
 assertErr(driver, '设备列表')
+driver.find_element_by_xpath("//a[@title='远程控制']").click()
+waitloadmask(driver)
+assertErr(driver, '远程控制')
+driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
 
 navigationBarClick(driver, '售货机-工控机-远程升级')
 waitloadmask(driver)
@@ -130,28 +140,69 @@ viewIt(driver, '远程升级任务列表')
 navigationBarClick(driver, '售货机-工控机-在线统计')
 waitloadmask(driver)
 assertErr(driver, '在线统计')
+try:
+    onlineLists = driver.find_elements_by_xpath("//tbody[@role]//tr")
+    randomClick(onlineLists)
+    waitloadmask(driver)
+    assertErr(driver, '在线统计详情')
+    driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+except:
+    logPrint('Warn：无' + '在线统计详情' + '可查看')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='在线统计曲线']")).click()
 # logPrint('进入页面 ' + '在线统计曲线')
 waitloadmask(driver)
 assertErr(driver, '在线统计曲线')
+try:
+    onlinedetailLists = driver.find_elements_by_xpath("//tbody[@role]//tr")
+    randomClick_more(onlinedetailLists)
+    waitloadmask(driver)
+    assertErr(driver, '在线统计曲线详情')
+except:
+    logPrint('Warn：无' + '在线统计曲线详情' + '可查看')
 
 navigationBarClick(driver, '售货机-工控机-流量统计')
 waitloadmask(driver)
 assertErr(driver, '流量统计')
+try:
+    trafficLists = driver.find_elements_by_xpath("//tbody[@role]//tr")
+    randomClick(trafficLists)
+    waitloadmask(driver)
+    assertErr(driver, '流量详情')
+    driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+except:
+    logPrint('Warn：无' + '流量统计详情' + '可查看')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='流量统计曲线']")).click()
 # logPrint('进入页面 ' + '流量统计曲线')
 waitloadmask(driver)
 assertErr(driver, '流量统计曲线')
+try:
+    trafficdetailLists = driver.find_elements_by_xpath("//tbody[@role]//tr")
+    randomClick_more(trafficdetailLists)
+    waitloadmask(driver)
+    assertErr(driver, '流量统计曲线详情')
+except:
+    logPrint('Warn：无' + '流量统计曲线详情' + '可查看')
 
 navigationBarClick(driver, '售货机-工控机-信号统计')
 waitloadmask(driver)
 assertErr(driver, '信号统计')
+try:
+    signaldetailLists = driver.find_elements_by_xpath("//tbody[@role]//tr")
+    randomClick_more(signaldetailLists)
+    waitloadmask(driver)
+    assertErr(driver, '信号统计曲线详情')
+except:
+    logPrint('Warn：无' + '信号统计曲线详情' + '可查看')
 
 navigationBarClick(driver, '售货机-优化工具-售货机优化')
 waitloadmask(driver)
 assertErr(driver, '售货机优化')
+driver.find_element_by_xpath("//a[@title='星级配置']").click()
+waitloadmask(driver)
+assertErr(driver, '星级配置')
+driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
 
 navigationBarClick(driver, '售货机-优化工具-货道优化')
 waitloadmask(driver)
@@ -164,6 +215,16 @@ assertErr(driver, '商品优化')
 navigationBarClick(driver, '商品-商品中心')
 waitloadmask(driver)
 assertErr(driver, '商品中心')
+driver.find_element_by_xpath("//a[@title='引入']").click()
+waitloadmask(driver)
+assertErr(driver, '商品引入')
+driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+goodsLists = driver.find_elements_by_xpath("//td[@class='cloud-table-select-column']")
+randomClick(goodsLists)
+driver.find_element_by_xpath("//a[@title='商品下架']").click()
+waitloadmask(driver)
+assertErr(driver, '商品下架')
+driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
 
 navigationBarClick(driver, '统计-数据分析-交易汇总')
 waitloadmask(driver)
@@ -229,6 +290,15 @@ try:
     driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
 except:
     logPrint('Warn：无库存可查看')
+try:
+    lineReps = driver.find_elements_by_xpath("//div[contains(@style,'z-index')]")
+    randomClick(lineReps)
+    driver.find_element_by_xpath("//a[@title='创建领货清单']").click()
+    waitloadmask(driver)
+    assertErr(driver, '创建领货清单')
+    driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+except:
+    logPrint('Warn：无补货数据，无法创建领货清单')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='领货清单列表']")).click()
 # logPrint('进入页面 ' + '领货清单列表')
