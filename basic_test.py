@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import os
+import shutil
 from time import sleep
 
 from selenium import webdriver
@@ -10,74 +11,79 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from defAssist import waitloadmask, assertErr, navigationBarClick, logPrint
+from defAssist import waitloadmask, assertErr, navigationBarClick, logPrint, randomClick, viewIt
 
 chromedriverpath = '.\\libs\\chromedriver.exe'
 runlogpath = '.runlog.log'
 try:
+    shutil.rmtree('.\\download')
     os.remove(runlogpath)
 except:
     pass
-file = open(runlogpath,'wb')
-
-
+os.mkdir('.\\download')
+file = open(runlogpath, 'wb')
 chrome_options = Options()
 # chrome_options.add_argument('--headless')
 # chrome_options.add_argument('--disable-gpu')
 # chrome_options.add_argument('Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36')
-
+prefs = {'profile.default_content_settings.popups': 0, 'download.default_directory': os.getcwd() + '\\download'}
+chrome_options.add_experimental_option('prefs', prefs)
 driver = webdriver.Chrome(options=chrome_options, executable_path=chromedriverpath)
-driver.set_window_size(1024, 768)
+driver.set_window_size(1366, 768)
 driver.get('http://182.150.21.232:10081/DeviceNetwork/www/')
 logPrint('打开页面')
-
 WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//input[@id='home-input-user']")).clear()
-WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//input[@id='home-input-user']")).send_keys('chenzhiz@inhand.com.cn')
+WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//input[@id='home-input-user']")).send_keys(
+    'chenzhiz@inhand.com.cn')
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//input[@id='home-input-pwd-password']")).clear()
-WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//input[@id='home-input-pwd-password']")).send_keys('czz123456')
+WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//input[@id='home-input-pwd-password']")).send_keys(
+    'czz123456')
 logPrint('输入用户名与密码')
 sleep(0.5)
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//button[@id='home-input-submit']")).click()
 logPrint('登录')
-
 waitloadmask(driver)
 assertErr(driver, '首页概览')
+sleep(3)
 
 navigationBarClick(driver, '地图模式')
 waitloadmask(driver)
 assertErr(driver, '地图模式')
 
-# navigationBarClick(driver, '售货机-售货机管理')
-# waitloadmask(driver)
-# assertErr(driver, '售货机管理')
-# WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='已删除售货机列表']")).click()
-# logPrint('进入页面 '+ '已删除售货机列表')
-# waitloadmask(driver)
-# assertErr(driver, '已删除售货机列表')
-
 navigationBarClick(driver, '点位-区域管理')
 waitloadmask(driver)
 assertErr(driver, '区域管理')
+viewIt(driver, '区域管理')
 
 navigationBarClick(driver, '点位-线路管理')
 waitloadmask(driver)
 assertErr(driver, '线路管理')
+viewIt(driver, '线路管理')
 
 navigationBarClick(driver, '点位-点位管理')
 waitloadmask(driver)
 assertErr(driver, '点位管理')
+viewIt(driver, '点位管理')
 
 navigationBarClick(driver, '售货机-售货机管理')
 waitloadmask(driver)
 assertErr(driver, '售货机管理')
+viewIt(driver, '售货机管理')
+# try:
+#     driver.find_element_by_xpath("//a[@title='导出']").click()
+#     driver.find_element_by_xpath("//input[@value='2']").click()
+#     driver.find_element_by_xpath("//a[text()='确定']").click()
+#     assertErr(driver, '售货机导出')
+# except:
+#     logPrint('Warn：没有导出按钮')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='未认证售货机列表']")).click()
-logPrint('进入页面 ' + '未认证售货机列表')
+# logPrint('进入页面 ' + '未认证售货机列表')
 waitloadmask(driver)
 assertErr(driver, '未认证售货机列表')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='已删除售货机列表']")).click()
-logPrint('进入页面 ' + '已删除售货机列表')
+# logPrint('进入页面 ' + '已删除售货机列表')
 waitloadmask(driver)
 assertErr(driver, '已删除售货机列表')
 
@@ -92,10 +98,19 @@ assertErr(driver, '货道模板')
 navigationBarClick(driver, '售货机-配货管理-在售商品')
 waitloadmask(driver)
 assertErr(driver, '在售商品')
+try:
+    onSaleGoodsElems = driver.find_elements_by_xpath("//div[@class='v_goods_info']")
+    randomClick(onSaleGoodsElems)
+    waitloadmask(driver)
+    assertErr(driver, '在售商品查看')
+    driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+except:
+    logPrint("Warn：无在售商品")
 
 navigationBarClick(driver, '售货机-机型管理')
 waitloadmask(driver)
 assertErr(driver, '机型管理')
+viewIt(driver, '机型管理')
 
 navigationBarClick(driver, '售货机-工控机-设备列表')
 waitloadmask(driver)
@@ -104,18 +119,20 @@ assertErr(driver, '设备列表')
 navigationBarClick(driver, '售货机-工控机-远程升级')
 waitloadmask(driver)
 assertErr(driver, '远程升级')
+viewIt(driver, '远程升级')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='升级任务列表']")).click()
-logPrint('进入页面 ' + '升级任务列表')
+# logPrint('进入页面 ' + '升级任务列表')
 waitloadmask(driver)
 assertErr(driver, '升级任务列表')
+viewIt(driver, '远程升级任务列表')
 
 navigationBarClick(driver, '售货机-工控机-在线统计')
 waitloadmask(driver)
 assertErr(driver, '在线统计')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='在线统计曲线']")).click()
-logPrint('进入页面 ' + '在线统计曲线')
+# logPrint('进入页面 ' + '在线统计曲线')
 waitloadmask(driver)
 assertErr(driver, '在线统计曲线')
 
@@ -124,7 +141,7 @@ waitloadmask(driver)
 assertErr(driver, '流量统计')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='流量统计曲线']")).click()
-logPrint('进入页面 ' + '流量统计曲线')
+# logPrint('进入页面 ' + '流量统计曲线')
 waitloadmask(driver)
 assertErr(driver, '流量统计曲线')
 
@@ -203,26 +220,39 @@ assertErr(driver, '报表下载')
 navigationBarClick(driver, '补货-补货管理')
 waitloadmask(driver)
 assertErr(driver, '补货管理')
+try:
+    lineReps = driver.find_elements_by_xpath("//div[contains(@style,'z-index')]")
+    randomClick(lineReps)
+    driver.find_element_by_xpath("//a[@title='查看']").click()
+    waitloadmask(driver)
+    assertErr(driver, '库存详情查看')
+    driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+except:
+    logPrint('Warn：无库存可查看')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='领货清单列表']")).click()
-logPrint('进入页面 ' + '领货清单列表')
+# logPrint('进入页面 ' + '领货清单列表')
 waitloadmask(driver)
 assertErr(driver, '领货清单列表')
+viewIt(driver, '领货清单')
 
 navigationBarClick(driver, '补货-出库管理')
 waitloadmask(driver)
 assertErr(driver, '出库管理')
+viewIt(driver, '出库管理')
 
 navigationBarClick(driver, '补货-补货记录')
 waitloadmask(driver)
 assertErr(driver, '补货记录')
+viewIt(driver, '补货记录')
 
 navigationBarClick(driver, '对账-补货对账')
 waitloadmask(driver)
 assertErr(driver, '补货对账')
+viewIt(driver, '补货对账')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='线路虚拟补货对账列表']")).click()
-logPrint('进入页面 ' + '线路虚拟补货对账列表')
+# logPrint('进入页面 ' + '线路虚拟补货对账列表')
 waitloadmask(driver)
 assertErr(driver, '线路虚拟补货对账列表')
 
@@ -241,23 +271,43 @@ assertErr(driver, '媒体库')
 navigationBarClick(driver, '增值服务-广告-售货机广告')
 waitloadmask(driver)
 assertErr(driver, '售货机广告')
+viewIt(driver, '售货机广告')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='广告任务列表']")).click()
-logPrint('进入页面 ' + '广告任务列表')
+# logPrint('进入页面 ' + '广告任务列表')
 waitloadmask(driver)
 assertErr(driver, '广告任务列表')
+viewIt(driver, '广告任务列表')
 
 navigationBarClick(driver, '增值服务-促销活动-游戏抽奖')
 waitloadmask(driver)
 assertErr(driver, '游戏抽奖')
+viewIt(driver, '游戏抽奖')
 
 navigationBarClick(driver, '增值服务-促销活动-优惠打折')
 waitloadmask(driver)
 assertErr(driver, '优惠打折')
+activityTypeList = driver.find_elements_by_xpath("//h3[@class='activityType']")
+typeName = []
+for activityType in activityTypeList:
+    typeName.append(activityType.text)
+for name in typeName:
+    driver.find_element_by_xpath("//h3[text()='"+ name +"']").click()
+    waitloadmask(driver)
+    assertErr(driver, name)
+    viewIt(driver,name)
+    driver.find_element_by_xpath("//span[@class='backLast']").click()
+    waitloadmask(driver)
+
 
 navigationBarClick(driver, '增值服务-促销活动-自定义取货码')
 waitloadmask(driver)
 assertErr(driver, '自定义取货码')
+pickcodeLists = driver.find_elements_by_xpath("//a[@class='detail']")
+randomClick(pickcodeLists)
+waitloadmask(driver)
+assertErr(driver, '自定义取货码查看')
+driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
 
 navigationBarClick(driver, '系统-权限分配-角色管理')
 waitloadmask(driver)
@@ -340,26 +390,25 @@ waitloadmask(driver)
 assertErr(driver, '微信绑定')
 
 WebDriverWait(driver, 5).until(lambda x: x.find_element_by_xpath("//a[text()='公众号绑定']")).click()
-logPrint('进入页面 ' + '公众号绑定')
+# logPrint('进入页面 ' + '公众号绑定')
 waitloadmask(driver)
 assertErr(driver, '公众号绑定')
-
 
 navigationBarClick(driver, '系统-操作日志')
 waitloadmask(driver)
 assertErr(driver, '操作日志')
 
-navigationBarClick(driver, '系统-账单-未付账单')
-waitloadmask(driver)
-assertErr(driver, '未付账单')
-
-navigationBarClick(driver, '系统-账单-所有账单')
-waitloadmask(driver)
-assertErr(driver, '所有账单')
-
-navigationBarClick(driver, '系统-账单-收费标准')
-waitloadmask(driver)
-assertErr(driver, '收费标准')
+# navigationBarClick(driver, '系统-账单-未付账单')
+# waitloadmask(driver)
+# assertErr(driver, '未付账单')
+#
+# navigationBarClick(driver, '系统-账单-所有账单')
+# waitloadmask(driver)
+# assertErr(driver, '所有账单')
+#
+# navigationBarClick(driver, '系统-账单-收费标准')
+# waitloadmask(driver)
+# assertErr(driver, '收费标准')
 
 navigationBarClick(driver, '系统-帮助文档')
 waitloadmask(driver)
