@@ -121,6 +121,8 @@ viewIt(driver, '机型管理')
 navigationBarClick(driver, '售货机-工控机-设备列表')
 waitloadmask(driver)
 assertErr(driver, '设备列表')
+inboxLists = driver.find_elements_by_xpath("//tbody[@role]//tr")
+randomClick(inboxLists)
 driver.find_element_by_xpath("//a[@title='远程控制']").click()
 waitloadmask(driver)
 assertErr(driver, '远程控制')
@@ -229,26 +231,73 @@ driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
 navigationBarClick(driver, '统计-数据分析-交易汇总')
 waitloadmask(driver)
 assertErr(driver, '交易汇总')
+reportTypeList = driver.find_elements_by_xpath("//select[@id='reportType']//option")
+lenReportTypeList = len(reportTypeList)
+for reportType in range(0, lenReportTypeList):
+    reportTypeName = reportTypeList[reportType].text
+    reportTypeList[reportType].click()
+    driver.find_element_by_xpath("//a[@title='查询']").click()
+    waitloadmask(driver)
+    assertErr(driver, '交易汇总' + reportTypeName)
 
 navigationBarClick(driver, '统计-数据分析-优惠活动汇总')
 waitloadmask(driver)
 assertErr(driver, '优惠活动汇总')
+try:
+    activitySummaryLists = driver.find_elements_by_xpath("//div[contains(@id,'detail')]")
+    randomClick(activitySummaryLists)
+    waitloadmask(driver)
+    assertErr(driver, '优惠活动汇总详情')
+except:
+    logPrint('Warn：无优惠活动汇总')
 
 navigationBarClick(driver, '统计-数据分析-畅销时间图表')
 waitloadmask(driver)
 assertErr(driver, '畅销时间图表')
+reportTypeList = driver.find_elements_by_xpath("//select[@id='reportType']//option")
+lenReportTypeList = len(reportTypeList)
+for reportType in range(0, lenReportTypeList):
+    reportTypeName = reportTypeList[reportType].text
+    reportTypeList[reportType].click()
+    driver.find_element_by_xpath("//a[@title='查询']").click()
+    waitloadmask(driver)
+    assertErr(driver, '畅销时间图表' + reportTypeName)
 
 navigationBarClick(driver, '统计-数据分析-畅销商品')
 waitloadmask(driver)
 assertErr(driver, '畅销商品')
+reportTypeList = driver.find_elements_by_xpath("//select[@id='reportType']//option")
+lenReportTypeList = len(reportTypeList)
+for reportType in range(0, lenReportTypeList):
+    reportTypeName = reportTypeList[reportType].text
+    reportTypeList[reportType].click()
+    driver.find_element_by_xpath("//a[@title='查询']").click()
+    waitloadmask(driver)
+    assertErr(driver, '畅销商品' + reportTypeName)
 
 navigationBarClick(driver, '统计-数据分析-畅销点位')
 waitloadmask(driver)
 assertErr(driver, '畅销点位')
+reportTypeList = driver.find_elements_by_xpath("//select[@id='reportType']//option")
+lenReportTypeList = len(reportTypeList)
+for reportType in range(0, lenReportTypeList):
+    reportTypeName = reportTypeList[reportType].text
+    reportTypeList[reportType].click()
+    driver.find_element_by_xpath("//a[@title='查询']").click()
+    waitloadmask(driver)
+    assertErr(driver, '畅销点位' + reportTypeName)
 
 navigationBarClick(driver, '统计-数据分析-畅销线路')
 waitloadmask(driver)
 assertErr(driver, '畅销线路')
+reportTypeList = driver.find_elements_by_xpath("//select[@id='reportType']//option")
+lenReportTypeList = len(reportTypeList)
+for reportType in range(0, lenReportTypeList):
+    reportTypeName = reportTypeList[reportType].text
+    reportTypeList[reportType].click()
+    driver.find_element_by_xpath("//a[@title='查询']").click()
+    waitloadmask(driver)
+    assertErr(driver, '畅销线路' + reportTypeName)
 
 navigationBarClick(driver, '统计-交易流水-交易明细')
 waitloadmask(driver)
@@ -373,11 +422,14 @@ for name in typeName:
 navigationBarClick(driver, '增值服务-促销活动-自定义取货码')
 waitloadmask(driver)
 assertErr(driver, '自定义取货码')
-pickcodeLists = driver.find_elements_by_xpath("//a[@class='detail']")
-randomClick(pickcodeLists)
-waitloadmask(driver)
-assertErr(driver, '自定义取货码查看')
-driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+try:
+    pickcodeLists = driver.find_elements_by_xpath("//a[@class='detail']")
+    randomClick(pickcodeLists)
+    waitloadmask(driver)
+    assertErr(driver, '自定义取货码查看')
+    driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+except:
+    logPrint('Warn：无自定义取货码')
 
 navigationBarClick(driver, '系统-权限分配-角色管理')
 waitloadmask(driver)
