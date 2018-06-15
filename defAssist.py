@@ -68,14 +68,29 @@ def randomClick_more(elements):
 
 def viewIt(driver, tag):
     try:
-        checkboxLists = driver.find_elements_by_xpath("//td[@class='cloud-table-select-column']")
-        randomClick(checkboxLists)
-        driver.find_element_by_xpath("//a[@title='查看']").click()
-        waitloadmask(driver)
-        assertErr(driver, tag + '查看')
-        driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+        viewFlag = False
+        if isElementExist(driver, "//a[@title='查看']"):
+            viewButton = driver.find_element_by_xpath("//a[@title='查看']")
+            checkboxLists = driver.find_elements_by_xpath("//td[@class='cloud-table-select-column']")
+            randomClick(checkboxLists)
+            viewFlag = True
+            viewButton.click()
+            waitloadmask(driver)
+            assertErr(driver, tag + '查看')
+            driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
+        if isElementExist(driver, "//a[@title='修改']"):
+            editButton = driver.find_element_by_xpath("//a[@title='修改']")
+            if viewFlag == False:
+                checkboxLists = driver.find_elements_by_xpath("//td[@class='cloud-table-select-column']")
+                randomClick(checkboxLists)
+            editButton.click()
+            waitloadmask(driver)
+            assertErr(driver, tag + '修改')
+            driver.find_element_by_xpath("//div[@class='ui-window-title-close']").click()
     except:
         logPrint('Warn：无'+ tag + '可查看')
+
+
 
 def logPrint(logstr):
     filepath = '.runlog.log'
@@ -84,3 +99,10 @@ def logPrint(logstr):
     with open(filepath, 'a', encoding='utf-8') as f:
         print(logstr)
         f.write(logstr+'\t\n')
+
+def isElementExist(driver, xpath):
+    try:
+        driver.find_element_by_xpath(xpath)
+        return True
+    except:
+        return False
