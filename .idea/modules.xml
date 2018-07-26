@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../workDoc/AppAutoTest/.idea/AppAutoTest.iml" filepath="$PROJECT_DIR$/../workDoc/AppAutoTest/.idea/AppAutoTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../appiumTest/.idea/appiumTest.iml" filepath="$PROJECT_DIR$/../appiumTest/.idea/appiumTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../pythonSerial/.idea/pythonSerial.iml" filepath="$PROJECT_DIR$/../pythonSerial/.idea/pythonSerial.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/pythonselenium.iml" filepath="$PROJECT_DIR$/.idea/pythonselenium.iml" />
     </modules>
   </component>
